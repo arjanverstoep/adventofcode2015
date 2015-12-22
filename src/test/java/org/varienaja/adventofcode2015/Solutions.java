@@ -56,6 +56,60 @@ public class Solutions {
     return sb.toString();
   }
 
+  private boolean solveDay11a(String inPassword) {
+    if (inPassword.indexOf('i') >= 0) {
+      return false;
+    }
+    if (inPassword.indexOf('o') >= 0) {
+      return false;
+    }
+    if (inPassword.indexOf('l') >= 0) {
+      return false;
+    }
+
+    boolean containsStraight = false;
+    for (int i = 0; i < inPassword.length() - 2; i++) {
+      if (inPassword.charAt(i + 2) - inPassword.charAt(i + 1) == 1 //
+          && inPassword.charAt(i + 1) - inPassword.charAt(i) == 1) {
+        containsStraight = true;
+        break;
+      }
+    }
+    if (!containsStraight) {
+      return false;
+    }
+
+    int pairCount = 0;
+    int i = 0;
+    while (i < inPassword.length() - 1) {
+      if (inPassword.charAt(i + 1) == inPassword.charAt(i)) {
+        pairCount++;
+        i += 2;
+      } else {
+        i++;
+      }
+    }
+
+    return pairCount > 1;
+  }
+
+  private String solveDay11aInc(String inString) {
+    StringBuilder increased = new StringBuilder();
+    for (int i = inString.length() - 1; i >= 0; i--) {
+      char c = (char)(inString.charAt(i) + 1);
+      if (c > 'z') {
+        c = 'a';
+        increased.insert(0, c);
+      } else {
+        increased.insert(0, c);
+        increased.insert(0, inString.substring(0, i));
+        return increased.toString();
+      }
+    }
+
+    return increased.toString();
+  }
+
   private int solveDay1a(String input) {
     int floor = 0;
     for (char c : input.toCharArray()) {
@@ -469,9 +523,9 @@ public class Solutions {
                     Integer v1 = wireValues.containsKey(m.group(1)) ? wireValues.get(m.group(1)) : Integer.parseInt(m.group(1));
                     Integer v2 = wireValues.containsKey(m.group(2)) ? wireValues.get(m.group(2)) : Integer.parseInt(m.group(2));
                     Integer val = v1 >> v2;
-                  wireValues.put(m.group(3), val);
-                  System.out.println(instruction + ": " + v1 + " >> " + v2 + " : " + m.group(3) + " -> " + val);
-                  handled = true;
+                    wireValues.put(m.group(3), val);
+                    System.out.println(instruction + ": " + v1 + " >> " + v2 + " : " + m.group(3) + " -> " + val);
+                    handled = true;
                   } else {
                     m = lshift.matcher(instruction);
                     if (m.matches()) {
@@ -688,6 +742,33 @@ public class Solutions {
       System.out.print(input.length());
       System.out.println("\t");
     }
+  }
+
+  /**
+   * @see <a href="http://adventofcode.com/day/11">Day 11</a>
+   */
+  @Test
+  public void testDay11() {
+    assertFalse(solveDay11a("hijklmmn"));
+    assertFalse(solveDay11a("abbceffg"));
+    assertFalse(solveDay11a("abbcegjk"));
+    assertFalse(solveDay11a("abcdefgh"));
+    assertTrue(solveDay11a("abcdffaa"));
+    assertFalse(solveDay11a("ghijklmn"));
+    assertTrue(solveDay11a("ghjaabcc"));
+
+    String candidate = "hxbxwxba";
+    while (!solveDay11a(candidate)) {
+      candidate = solveDay11aInc(candidate);
+    }
+    System.out.println(candidate);
+
+    candidate = solveDay11aInc(candidate);
+    while (!solveDay11a(candidate)) {
+      candidate = solveDay11aInc(candidate);
+    }
+    System.out.println(candidate);
+
   }
 
   /**
